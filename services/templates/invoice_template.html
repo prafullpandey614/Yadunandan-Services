@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 0px; }
+        table, th, td { border: 1px solid black; }
+        th { padding: 6px; text-align: left; }
+        td { padding: 4px; text-align: left; }
+        th { font-size: 12px; }
+        td { font-size: 12px; }
+        .header { text-align: center; position: relative; }
+        .container { display: flex; justify-content: space-between; width: 100%; border: 1px solid black;}
+        .logo-container {
+            position: absolute;
+            top: -4px;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #print-btn {
+            display: inline-block;
+            background-color: #6B46C1; /* bg-purple-500 */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
+            background-color: #5A3CA4;
+        }
+        #print-btn:hover {
+            background-color: #black; /* hover:bg-purple-600 */
+        }
+
+        .bank{
+            border: 1px solid black;
+        }
+        .calculations{
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        function printPage() {
+            let btn = document.getElementById("print-btn")
+            btn.style.display = 'none'; 
+            window.print();
+            btn.style.display = 'block'; 
+
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <h4>Original Invoice</h4>
+        <h3>YADUNANDAN SUPER SERVICES</h3>
+        <p>House No. 34, Road No. 12, S.K Nagar, Patna-800001</p>
+        <p>yadunandansuperservices@gmail.com, Contact: 9973910328, 7091689975</p>
+    </div>
+
+    <table>
+        <tr>
+            <th style="width: 20%;">GSTIN</th>
+            <td style="width: 30%;">10AZUP6250EZZB</td>
+            <th style="width: 20%;">Serial Number of Invoice</th>
+            <td style="width: 30%;">{{ booking.serial_number }}</td>
+        </tr>
+        <tr>
+            <th>PAN</th>
+            <td>AZUP6250E</td>
+            <th>Date of Invoice</th>
+            <td>{{ booking.booking_date }}</td>
+        </tr>
+        <tr>
+            <th>STATE</th>
+            <td>BIHAR</td>
+            <th>Service Month</th>
+            <td>Jan - 24</td>
+        </tr>
+        <tr>
+            <th>STATE CODE</th>
+            <td>10</td>
+            <th>PLACE OF SUPPLY</th>
+            <td>PATNA</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th style="text-align: center; font-size: 16px;">Bill To</th>
+            <th style="text-align: center; font-size: 16px;">Ship To</th>
+        </tr>
+        <tr>
+            <td style="text-align: center;">{{ booking.source_address }}</td>
+            <td style="text-align: center;">{{ booking.destination_address }}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th style="width: 25%;">STATE</th>
+            <td style="width: 25%;">{{ booking.customer.state }}</td>
+            <th style="width: 25%;">STATE</th>
+            <td style="width: 25%;">{{ booking.customer.state }}</td>
+        </tr>
+        <tr>
+            <th>STATE CODE</th>
+            <td>{{ booking.customer.state_code }}</td>
+            <th>STATE CODE</th>
+            <td>{{ booking.customer.state_code }}</td>
+        </tr>
+        <tr>
+            <th>PAN</th>
+            <td>{{ booking.customer.pan }}</td>
+            <th>PAN</th>
+            <td>{{ booking.customer.pan }}</td>
+        </tr>
+        <tr>
+            <th>GSTIN</th>
+            <td>{{ booking.customer.gst_in }}</td>
+            <th>GSTIN</th>
+            <td>{{ booking.customer.gst_in }}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th style="width: 5%;">S. No.</th>
+            <th style="width: 25%;">Description of Goods / Services</th>
+            <th style="width: 10%;">HSN Code</th>
+            <th style="width: 15%;">Running Days / KM / HRS</th>
+            <th style="width: 15%;">Rate</th>
+            <th style="width: 15%;">Total Gross Value</th>
+            {% if gst_type %}
+            <th style="width: 15%;">IGST @ 12%</th>
+            {% else %}
+            <th style="width: 7%;">CGST @ 12%</th>
+            <th style="width: 8%;">SGST @ 12%</th>
+
+            {% endif %}
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Running Days</td>
+            <td>{{ booking.hsn_code }}</td>
+            <td>{{ booking.running_days }}</td>
+            <td>{{ booking.rate_days }}</td>
+            <td>{{ booking.total_gross_value_days }}</td>
+            {% if gst_type %}
+            <td>{{ booking.igst_days }}</td>
+            {% else %}
+            <td>{{ booking.cgst_days }}</td>
+            <td>{{ booking.sgst_days }}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Extra Km</td>
+            <td>{{ booking.hsn_code }}</td>
+            <td>{{ booking.extra_kms }}</td>
+            <td>{{ booking.rate_km }}</td>
+            <td>{{ booking.total_gross_value_kms }}</td>
+            {% if gst_type %}
+            <td>{{ booking.igst_kms }}</td>
+            {% else %}
+            <td>{{ booking.cgst_kms }}</td>
+            <td>{{ booking.sgst_kms }}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Extra Hours</td>
+            <td>{{ booking.hsn_code }}</td>
+            <td>{{ booking.extra_hours }}</td>
+            <td>{{ booking.rate_hours }}</td>
+            <td>{{ booking.total_gross_value_hrs }}</td>
+            {% if gst_type %}
+            <td>{{ booking.igst_extra_hrs }}</td>
+            {% else %}
+            <td>{{ booking.cgst_extra_hrs }}</td>
+            <td>{{ booking.sgst_extra_hrs }}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Driver Allowance</td>
+            <td>{{ booking.hsn_code }}</td>
+            <td></td>
+            <td></td>
+            <td>{{ booking.driver_allowance }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Night Charges</td>
+            <td>{{ booking.hsn_code }}</td>
+            <td>{{ booking.night_hold }}</td>
+            <td>{{ booking.night_hold_amount }}</td>
+            <td>{{night_hold_charges }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align: right; padding : 8px; font-size: 18px;"><b>Total</b></td>
+            <td>{{ booking.total_gross_value_without_penalty }}</td>
+            <td>{{ total_gst }}</td>
+        </tr>
+    </table>
+    
+    <div class="container">
+        <div class="bank" style="width: 60%; padding: 15px;">
+            <b>Bank : </b> Bank Name <br>
+            <b>A/C No. : </b> 7896541236547 <br>
+            <b>IFSC : </b> SBIN0007897 <br>
+            <b>PAN No. : </b> JNHPK9053C <br>
+            <br>
+            <b>Amount of Tax Subject to Reverse Charge : </b> NO <br>
+            <p style="font-size: 16px;">Grand Total in Words : {{in_words}} Only</p><br><br><br>
+            
+        </div>
+        <div class="calculations" style="width: 40%; text-align:right; padding: 15px;">
+            <b>Gross Value : </b> {{ booking.total_gross_value_without_penalty }}<br>
+            <b>Total Deduction : </b>{{ booking.total_deduction }} <br>
+            <b>Total Gross Value : </b> {{ total_gross_value }} <br>
+            <b>CGST 6% : </b> {% if booking.cgst_applicable %} {{ cgst }} {% else %} 0 {% endif %} <br>
+            <b>SGST 6% : </b> {% if booking.sgst_applicable %} {{ cgst }} {% else %} 0 {% endif %} <br>
+            <b>IGST 12% : </b> {% if booking.igst_applicable %} {{ total_gst }} {% else %} 0 {% endif %}  <br>
+            <b>Total Taxable Value : </b> {{ total_taxable_value }} <br>
+            <b>Toll Parking : </b>{{ booking.toll_and_parking }}   <br>
+            <b>Round Off : </b> -  <br>
+            <b>Net Invoice Value : </b> {{ net_invoice_value }}<br>
+            <br>
+            
+            Company Name 
+            <br>
+            <br>
+            Authorised Signature
+        </div>
+        
+    
+
+    </div>
+    <button onclick="printPage()"  id='print-btn'>Print This Booking</button>
+    
+</body>
+</html>
