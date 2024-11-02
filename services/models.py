@@ -19,7 +19,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=12,null=True,blank=True)
     email = models.CharField(max_length=50,null=True,blank=True)
     pan = models.CharField(max_length=15,null=True,blank=True)
-    state = models.CharField(max_length=50,choices=state_choice)
+    state = models.CharField(max_length=50,choices=state_choice,default='Bihar')
     state_code = models.CharField(max_length=50,null=True,blank=True)
     gst_in = models.CharField(max_length=50,null=True,blank=True)
     # team_code = models.CharField(max_length=30,null=True,blank=True)
